@@ -12,13 +12,15 @@ import random
 import numpy as np 
 import pybullet as p 
 import pybullet_data
+
+
 class Quadruped(gym.Env): 
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
         self.step_counter = 0
         self.episode_counter = 0
-        p.connect(p.GUI)
+        p.connect(p.DIRECT)
 
         self.action_space = spaces.Box(
             np.array([-0.55, -0.3, -0.55, -0.3, -1.05, -0.8, -1.05, -0.8]),
@@ -36,8 +38,9 @@ class Quadruped(gym.Env):
         done = False
         if abs(new_orientation[0]) > 1 or abs(new_orientation[1]) > 0.5:
             done = True
-        reward = (1000 * ((position[0] - new_position[0]))
-                  - (abs(new_orientation[0]) + abs(new_orientation[1])))
+        reward = (500 * ((position[0] - new_position[0]))
+                   - 10 * (abs(new_orientation[0]) - 0.2 + abs(new_orientation[1]) - 0.15)
+                 )
         joint_info = p.getJointStates(self.robotId, [0, 1, 3, 4, 6, 7, 9, 10])
         motor_positions = []
         for motor_info in joint_info:
@@ -89,3 +92,5 @@ class Quadruped(gym.Env):
 
     def close(self):
         p.disconnect()
+        
+        

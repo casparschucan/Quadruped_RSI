@@ -20,7 +20,7 @@ class Quadruped(gym.Env):
     def __init__(self):
         self.step_counter = 0
         self.episode_counter = 0
-        p.connect(p.DIRECT)
+        p.connect(p.GUI)
 
         self.action_space = spaces.Box(
             np.array([-0.55, -0.3, -0.55, -0.3, -1.05, -0.8, -1.05, -0.8]),
@@ -30,16 +30,27 @@ class Quadruped(gym.Env):
 
     def step(self, action):
         position, orientationq = p.getBasePositionAndOrientation(self.robotId)
-        p.setJointMotorControlArray(self.robotId, [0, 1, 3, 4, 6, 7, 9, 10],
-                                    p.POSITION_CONTROL, targetPositions=action)
+        # p.setJointMotorControlArray(self.robotId, [0, 1, 3, 4, 6, 7, 9, 10],
+        #                             p.POSITION_CONTROL, targetPositions=action,
+        #                             forces=np.array([1]*8)
+        #                             )
+        j = 0
+        for i in range(8):
+            if i % 3 == 2:
+                j += 1
+            p.setJointMotorControl2(self.robotId, j,
+                                    p.POSITION_CONTROL, targetPosition=action[i],
+                                    maxVelocity=5.23
+            )
+            j += 1
         p.stepSimulation()
         new_position, new_orientationq = p.getBasePositionAndOrientation(self.robotId)
         new_orientation = p.getEulerFromQuaternion(new_orientationq)
         done = False
         if abs(new_orientation[0]) > 1 or abs(new_orientation[1]) > 0.5:
             done = True
-        reward = (500 * ((position[0] - new_position[0]))
-                   - 10 * (abs(new_orientation[0]) - 0.2 + abs(new_orientation[1]) - 0.15)
+        reward = (600 * ((position[0] - new_position[0]))
+                   - 1.35 * (abs(new_orientation[0]) - 0.2 + abs(new_orientation[1]) - 0.15)
                  )
         joint_info = p.getJointStates(self.robotId, [0, 1, 3, 4, 6, 7, 9, 10])
         motor_positions = []
@@ -50,14 +61,14 @@ class Quadruped(gym.Env):
                                     base_ang_velocity[0], base_ang_velocity[1]]
         self.observation = np.array(base_angles_and_velocity + motor_positions)
         self.step_counter += 1
-        return self.observation, reward, done, {}
+        return self.observation, reward, done, new_position
 
 
-    def reset(self):
+    def reset(self, gravity):
         self.episode_counter += 1
         self.step_counter = 0
         p.resetSimulation()
-        p.setGravity(0, 0, -9.81)
+        p.setGravity(0, 0, -gravity)
         p.resetDebugVisualizerCamera(5, 45, -20, [0, 0, 0])
         self.visual_shape = p.createVisualShape(p.GEOM_BOX, halfExtents = [10,10,0.1])
         self.coll_shape = p.createCollisionShape(p.GEOM_BOX, halfExtents = [10,10,0.1])
@@ -92,5 +103,3 @@ class Quadruped(gym.Env):
 
     def close(self):
         p.disconnect()
-        
-        

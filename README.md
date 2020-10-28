@@ -1,6 +1,6 @@
 # Quadruped_RSI
 
-Anleitung um die trainierten Modelle auszuprobieren:\ 
+Anleitung um die trainierten Modelle auszuprobieren:   
 1.benötigte Bibliotheken installieren\
 2.test.py herunterladen\
 3.gewünschtes Modell als .zip Datei in gleichen Ordner wie test.py herunterladen\

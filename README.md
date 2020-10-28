@@ -2,10 +2,10 @@
 
 Anleitung um die trainierten Modelle auszuprobieren:   
 1.benötigte Bibliotheken installieren\
-2.test.py herunterladen\
-3.gewünschtes Modell als .zip Datei in gleichen Ordner wie test.py herunterladen\
-4.gewünschter Roboter als .urdf Datei in gleichen Ordner wie test.py herunterladen\
-5.an richtigen Stellen Dateinamen von Roboter und Modell in test.py einfügen
+2.In tests Ordner die gewünschte Simulation herunterladen\
+3.gewünschtes und zu Simulation passendes Modell als .zip Datei in gleichen Ordner wie Simulatonsdatei herunterladen\
+4.gewünschter und zu Simulations passender Roboter als .urdf Datei in gleichen Ordner wie Simulatonsdatei herunterladen\
+5.An richtigen, auskommenierten Stellen Dateinamen von Roboter und Modell in Simulatonsdatei einfügen
 
 benötigte Bibliotheken:\
 openAI Gym\
